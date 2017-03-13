@@ -3,7 +3,7 @@
 // Zones interacts with API and passes down to individual Zone
 
 import React, { Component } from 'react'
-import Zone from './Zone'
+import Zone from './../presentation/Zone'
 
 class Zones extends Component {
     // runs on load

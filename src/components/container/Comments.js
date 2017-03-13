@@ -3,7 +3,7 @@
 // Zones interacts with API and passes down to individual Zone
 
 import React, { Component } from 'react'
-import Cmnt from './Cmnt'
+import Comment from './../presentation/Comment'
 import styles from './styles.js'
 
 class Comments extends Component {
@@ -25,7 +25,7 @@ class Comments extends Component {
     render() {
         const commentsList = this.state.list.map((comment, i) => {
             return (
-                <li key={i}><Cmnt currentComment={comment} /></li>
+                <li key={i}><Comment currentComment={comment} /></li>
             )
         })
 

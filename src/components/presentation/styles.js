@@ -1,7 +1,4 @@
 export default {
-    universal: {
-
-    },
     zone: {
         container: {
             padding: 16,
@@ -18,17 +15,7 @@ export default {
             color: 'red'
         },
     },
-    comments: {
-        commentsBox: {
-            padding: 12,
-            background: '#f9f9f9',
-            border:'1px solid #ddd'
-        },
-        commentsList: {
-            listStyleType: 'none'
-        }
-    },
-    cmnt: {
+    comment: {
         commentBody: {
             fontSize: 20,
             fontWeight: 400

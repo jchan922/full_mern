@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 // var React = require('react')                 // ES5 syntax
 import ReactDOM from 'react-dom'
-import Home from './components/Home'
+import Home from './components/layout/Home'
 
 class App extends Component {
 
