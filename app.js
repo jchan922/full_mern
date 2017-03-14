@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
 var dbUrl = 'mongodb://localhost/full_mern'     // connect to mongo
-                                                // purge db => db.getCollection("zoneschemas").drop()
+                                                // purge db => db.getCollection("schemaName").drop()
 mongoose.connect(dbUrl, function(err, res){
     if(err){
         console.log('DB Connection Failed '+err)
