@@ -1,11 +1,11 @@
 // "Container" of App showing all Comments
 // Where data interation / CRUD will take place
-// Zones interacts with API and passes down to individual Zone
+// Comments interacts with API and passes down to individual Zone
 
 import React, { Component } from 'react'
-import superagent from 'superagent'                                    // Superagent module allows API calls
-import Comment from './../presentation/Comment'
+import { CreateComment, Comment } from './../presentation'
 import styles from './styles.js'
+import { APIManager } from '../../utils'
 
 class Comments extends Component {
 
@@ -15,81 +15,41 @@ class Comments extends Component {
         // NEVER MANIPULATE INITIAL STATE
         // ALWAYS MAKE A COPY AND ALTER THE COPY
         this.state = {
-            comment: {
-                username: '',
-                body: '',
-                timestamp: '',
-            },
             list: []
         }
     }
 
     componentDidMount(){
         // componentDidMount() gets called when component loads
-        superagent
-        .get('/api/comment')
-        .query(null)
-        .set('Accept', 'application/json')
-        .end((err,response) => {
-            if (err){
-                alert('ERROR: '+err)
+        APIManager.get('/api/comment', null, (err, response) => {
+            if(err){
+                alert('ERROR: '+err.message)
                 return
             }
-            let results = response.body.results
             this.setState({
-                list: results
+                list: response.results
             })
         })
     }
 
-    updateUsername(event){
-        let updatedComment = Object.assign({}, this.state.comment);         // Assign updatedComment to this.state.comment Object
-        updatedComment['username'] = event.target.value;                    // Assign only username key/val to new updatedComment Object
+    submitComment(comment){
+        console.log('Comments Container - submitComment: ', JSON.stringify(comment));                // Data recieved from CreateComment subcomponent
+        let commentToSubmit = Object.assign({}, comment)
+        APIManager.post('/api/comment', commentToSubmit, (err, response) => {
+            if(err){
+                alert('ERROR: '+err.message)
+                return
+            }
+            console.log('COMMENT CREATED: '+JSON.stringify(response));
+            let updatedList = Object.assign([], this.state.list);               // Copy list array from state
+            updatedList.push(response.results);                                 // Push into this.state.list for Comments container
+            console.log(updatedList);
 
-        // Save State
-        this.setState({
-            comment: updatedComment
+            // Save State and update Component and visual of page
+            this.setState({
+                list: updatedList
+            })
         })
-
-    }
-
-    updateBody(event){
-        let updatedComment = Object.assign({}, this.state.comment);         // Assign updatedComment to this.state.comment Object
-        updatedComment['body'] = event.target.value;                        // Assign only body key/val to new updatedComment Object
-
-        // Save State
-        this.setState({
-            comment: updatedComment
-        })
-
-    }
-
-    updateTimestamp(event){
-        let updatedComment = Object.assign({}, this.state.comment);         // Assign updatedComment to this.state.comment Object
-        updatedComment['timestamp'] = Date();                               // Assign only timestamp key/val to new updatedComment Object
-
-        // Save State
-        this.setState({
-            comment: updatedComment
-        })
-    }
-
-    submitComment(){
-        console.log('Submit Button Clicked', JSON.stringify(this.state.comment));
-        let updatedList = Object.assign([], this.state.list);               // Copy list array from state
-        updatedList.push(this.state.comment);                               // Push into this.state.list for Comments container
-
-        // Save State and update Component and visual of page
-        this.setState({
-            list: updatedList
-        })
-
-        this.state.comment = {
-            username: '',
-            body: '',
-            timestamp: '',
-        }
-
     }
 
     render() {
@@ -109,10 +69,7 @@ class Comments extends Component {
                         {commentsList}
                     </ul>
 
-                    <input id="username" onChange={this.updateUsername.bind(this)} className="form-control" type="text" placeholder=" Username"/><br />
-                    <input id="body" onChange={this.updateBody.bind(this)} className="form-control" type="text" placeholder=" Comment"/><br />
-                    <input id="timestamp" onChange={this.updateTimestamp.bind(this)} className="form-control" type="text" placeholder=" Timestamp"/><br />
-                    <button onClick={this.submitComment.bind(this)} className="btn btn-info">Submit Comment</button>
+                    <CreateComment onCreate={this.submitComment.bind(this)} />
 
                 </div>
             </div>

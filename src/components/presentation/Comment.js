@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 import styles from './styles.js'
 
 class Comment extends Component {
+
     render(){
         const comment = styles.comment
         return (

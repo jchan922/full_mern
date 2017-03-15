@@ -3,8 +3,8 @@
 // Zones interacts with API and passes down to individual Zone
 
 import React, { Component } from 'react'
-import superagent from 'superagent'                                    // Superagent module allows API calls
-import Zone from './../presentation/Zone'
+import { CreateZone, Zone} from './../presentation'
+import { APIManager } from '../../utils'
 
 class Zones extends Component {
 
@@ -15,82 +15,69 @@ class Zones extends Component {
         // NEVER MANIPULATE INITIAL STATE
         // ALWAYS MAKE A COPY AND ALTER THE COPY
         this.state = {
-            zone: {
-                name: '',
-                zipCodes: '',
-            },
+            selected: 0,
             list: []
         }
     }
 
     componentDidMount(){
         // componentDidMount() gets called when component loads
-        superagent
-        .get('/api/zone')
-        .query(null)
-        .set('Accept', 'application/json')
-        .end((err, response) => {
-
+        APIManager.get('/api/zone', null, (err, response) => {
             if(err){
-                alert('ERROR: '+err)
+                alert('ERROR: '+err.message)
                 return
             }
+            this.setState({
+                list: response.results
+            })
+        })
+    }
 
-            let results = response.body.results                         // Results from our API call
+    addZone(zone){
+        let zoneToDb = Object.assign({}, zone)
+        console.log('Zones Container - addZone: ', JSON.stringify(zoneToDb));       // Data recieved from CreateComment subcomponent
+        APIManager.post('/api/zone', zoneToDb, (err, response) => {
+            if(err){
+                alert('ERROR: '+err.message)
+                return
+            }
+            console.log('ZONE CREATED: '+JSON.stringify(response))
+            let updatedList = Object.assign([], this.state.list);
+            updatedList.push(response.results);
+            console.log(updatedList);
 
             this.setState({
-                list: results
+                list: updatedList
             })
-
-        })
-    }
-
-    updatedZone(event){
-        let updatedZone = Object.assign({}, this.state.zone);           // Assign updatedZone to this.state.comment Object copy
-        updatedZone[event.target.id] = event.target.value;              // Assign input key/val to new updatedZone Object copy
-
-        // Save State
-        this.setState({
-            zone: updatedZone
         })
 
-    }
-
-    addZone(){
-        let updatedList = Object.assign([], this.state.list);          // Copy list array from state
-        updatedList.push(this.state.zone);                             // Push into this.state.list for Zone container
-
-        // Save State and update Component and visual of page
-        this.setState({
-            list: updatedList
-        })
-
-        this.state.comment = {
-            username: '',
-            body: '',
-            timestamp: '',
-        };
+        // // BELOW CODE RENDERS ON FRONT END BUT DOESNT GO INTO DB
+        // let updatedList = Object.assign([], this.state.list);          // Copy list array from state
+        // updatedList.push(this.state.zone);                             // Push into this.state.list for Zone container
+        //
+        // // Save State and update Component and visual of page
+        // this.setState({
+        //     list: updatedList
+        // })
 
     }
 
     render(){
         // iterate through the listItems array and create an <li> for each iteration
         const listItems = this.state.list.map((zone, i) => {
+            let selected = (i==this.state.selected)
             return (
-                <li key={i}><Zone currentZone={zone} /></li>
+                <li key={i}><Zone isSelected={selected} currentZone={zone} /></li>
             )
         })
 
         return (
             <div>
+                <h2> Zones </h2>
                 <ol>
                     {listItems}
                 </ol>
-
-                <input id="name" onChange={this.updatedZone.bind(this)} className="form-control" type="text" name=" Zone Name" placeholder=" Name"/><br />
-                <input id="zipCodes" onChange={this.updatedZone.bind(this)} className="form-control" type="text" placeholder=" Zipcode(s)"/><br />
-                <button onClick={this.addZone.bind(this)} className="btn btn-info">Add Zone</button>
-
+                <CreateZone onCreate={this.addZone.bind(this)} />
             </div>
         )
     }

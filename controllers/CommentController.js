@@ -24,6 +24,7 @@ module.exports = {
 
     create: function(params, callback){
         Comment.create(params, function(err, comment){
+            console.log(err, comment);
             if (err){
                 callback(err, null)
                 return

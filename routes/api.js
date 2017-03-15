@@ -28,12 +28,8 @@ router.get('/:resource', function(req,res,next){
             confirmation:'success',
             results: results
         })
-    })
 
-    // res.json({
-    //     confirmation: 'success',
-    //     resource: resource
-    // })
+    })
 
 })
 
