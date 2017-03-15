@@ -62,12 +62,20 @@ class Zones extends Component {
 
     }
 
+    selectZone(index){
+        console.log('selectZone: '+index);
+        this.setState({
+            selected: index
+        })
+    }
+
     render(){
         // iterate through the listItems array and create an <li> for each iteration
         const listItems = this.state.list.map((zone, i) => {
+            // i is the index of the this.state.list
             let selected = (i==this.state.selected)
             return (
-                <li key={i}><Zone isSelected={selected} currentZone={zone} /></li>
+                <li key={i}><Zone index={i} select={this.selectZone.bind(this)} isSelected={selected} currentZone={zone} /></li>
             )
         })
 

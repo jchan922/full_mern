@@ -9867,17 +9867,26 @@ var Zones = function (_Component) {
             // })
         }
     }, {
+        key: 'selectZone',
+        value: function selectZone(index) {
+            console.log('selectZone: ' + index);
+            this.setState({
+                selected: index
+            });
+        }
+    }, {
         key: 'render',
         value: function render() {
             var _this4 = this;
 
             // iterate through the listItems array and create an <li> for each iteration
             var listItems = this.state.list.map(function (zone, i) {
+                // i is the index of the this.state.list
                 var selected = i == _this4.state.selected;
                 return _react2.default.createElement(
                     'li',
                     { key: i },
-                    _react2.default.createElement(_presentation.Zone, { isSelected: selected, currentZone: zone })
+                    _react2.default.createElement(_presentation.Zone, { index: i, select: _this4.selectZone.bind(_this4), isSelected: selected, currentZone: zone })
                 );
             });
 
@@ -10232,6 +10241,16 @@ var Zone = function (_Component) {
     }
 
     _createClass(Zone, [{
+        key: 'onSelectTitle',
+        value: function onSelectTitle() {
+            event.preventDefault();
+            console.log('onSelectTitle: ' + this.props.index);
+            // go back to the container using property on Zone Presentation
+            // on click, we will run the select function that actually refers back to the Zones Container
+            // pass back index value with it
+            this.props.select(this.props.index);
+        }
+    }, {
         key: 'render',
         value: function render() {
             var style = _styles2.default.zone;
@@ -10252,7 +10271,7 @@ var Zone = function (_Component) {
                 { style: style.container },
                 _react2.default.createElement(
                     'h2',
-                    { style: style.header },
+                    { onClick: this.onSelectTitle.bind(this), style: style.header },
                     title
                 ),
                 _react2.default.createElement(
@@ -10260,7 +10279,12 @@ var Zone = function (_Component) {
                     { className: 'detail' },
                     zipCode
                 ),
-                _react2.default.createElement('br', null)
+                _react2.default.createElement('br', null),
+                _react2.default.createElement(
+                    'span',
+                    { className: 'detail' },
+                    this.props.currentZone.numComments
+                )
             );
         }
     }]);

@@ -5,6 +5,15 @@ import styles from './styles.js'
 
 class Zone extends Component {
 
+    onSelectTitle(){
+        event.preventDefault()
+        console.log('onSelectTitle: '+this.props.index);
+        // go back to the container using property on Zone Presentation
+        // on click, we will run the select function that actually refers back to the Zones Container
+        // pass back index value with it
+        this.props.select(this.props.index)
+    }
+
     render(){
         const style = styles.zone
         const zipCode = this.props.currentZone.zipCodes[0]
@@ -13,10 +22,11 @@ class Zone extends Component {
 
         return(
             <div style={style.container}>
-                <h2 style={style.header}>
+                <h2 onClick={this.onSelectTitle.bind(this)} style={style.header}>
                     { title }
                 </h2>
                 <span className="detail">{zipCode}</span><br />
+                <span className="detail">{this.props.currentZone.numComments}</span>
             </div>
         )
     }
